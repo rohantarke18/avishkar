@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useCivic } from '../context/CivicContext';
 import { UserRole } from '../types';
-import { Building2, HardHat, ShieldCheck, User as UserIcon, ArrowRight, Check } from 'lucide-react';
+import { Building2, HardHat, ShieldCheck, User as UserIcon, ArrowRight, Check, X } from 'lucide-react';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose?: () => void;
+  onSuccessRedirect?: (role: UserRole) => void;
 }
 
-export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSuccessRedirect }) => {
   const { login } = useCivic();
-  const [email, setEmail] = useState('citizen@demo.civicbridge.org');
-  const [password, setPassword] = useState('demo1234');
+  const [email, setEmail] = useState('citizen@civicbridge.org');
+  const [password, setPassword] = useState('password123');
   const [selectedRole, setSelectedRole] = useState<UserRole>('citizen');
   const [showRoleStep, setShowRoleStep] = useState(false);
 
@@ -22,62 +23,77 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     setShowRoleStep(true);
   };
 
-  const handleGoogleDemoLogin = () => {
-    setEmail('google.user@civicbridge.org');
+  const handleGoogleLogin = () => {
+    setEmail('ananya.citizen@civicbridge.org');
     setShowRoleStep(true);
   };
 
   const handleCompleteLogin = (roleToUse?: UserRole) => {
     const finalRole = roleToUse || selectedRole;
     login(email, finalRole);
+    if (onSuccessRedirect) {
+      onSuccessRedirect(finalRole);
+    }
     if (onClose) onClose();
   };
 
   const roleOptions: { role: UserRole; title: string; desc: string; icon: React.ReactNode }[] = [
     {
       role: 'citizen',
-      title: 'Citizen',
-      desc: 'Report problems, track updates, suggest solutions & vote on community ideas',
+      title: 'Citizen Portal',
+      desc: 'Report municipal issues, track resolution milestones, and vote on community solutions',
       icon: <UserIcon className="w-5 h-5 text-blue-600" />
     },
     {
       role: 'field_officer',
-      title: 'Field Officer',
-      desc: 'View assigned issues, update work status, and upload resolution proof',
+      title: 'Field Operations',
+      desc: 'Inspect assigned work orders, update repair status, and submit geo-tagged resolution photos',
       icon: <HardHat className="w-5 h-5 text-amber-600" />
     },
     {
       role: 'dept_admin',
-      title: 'Department Admin',
-      desc: 'Assign field officers, set deadlines, and publish unsolved issues as Open Challenges',
+      title: 'Department Administration',
+      desc: 'Manage ward work orders, enforce SLA turnaround, and publish open civic challenges',
       icon: <Building2 className="w-5 h-5 text-indigo-600" />
     },
     {
       role: 'super_admin',
-      title: 'Super Admin',
-      desc: 'City-wide oversight, cross-department tracking, and pilot approvals',
+      title: 'City Administration',
+      desc: 'City-wide governance, inter-departmental grievance SLA audits, and civic pilot approvals',
       icon: <ShieldCheck className="w-5 h-5 text-emerald-600" />
     }
   ];
 
   return (
     <div
-      id="demo-auth-overlay"
-      className="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto"
+      id="auth-modal-overlay"
+      className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto"
     >
       <div
-        id="demo-auth-card"
-        className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        id="auth-modal-card"
+        className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200 relative"
       >
+        {/* Close Button */}
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg transition-colors z-10"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+
         {/* Header */}
         <div className="bg-slate-900 text-white p-6 text-center border-b border-slate-800">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-600/30 text-blue-400 mb-3 border border-blue-500/30">
-            <Building2 className="w-6 h-6" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-700 text-white mb-3 shadow-md font-extrabold text-lg">
+            CB
           </div>
-          <h2 className="text-xl font-bold tracking-tight text-white">Welcome to CivicBridge</h2>
-          <p className="text-xs text-slate-400 mt-1">From Protest to Participation</p>
-          <div className="mt-2 inline-block px-2.5 py-0.5 rounded bg-blue-950 text-blue-300 text-[10px] font-mono border border-blue-800">
-            Simulated Pitching Authentication
+          <h2 className="text-xl font-bold tracking-tight text-white">CivicBridge Identity & Access</h2>
+          <p className="text-xs text-slate-400 mt-1">Official Municipal Single Sign-On Portal</p>
+          <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 text-[11px] font-medium border border-emerald-800/80">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>Government of Greater Metropolis</span>
           </div>
         </div>
 
@@ -87,15 +103,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             <form onSubmit={handleContinue} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Email address
+                  Official Email Address
                 </label>
                 <input
                   type="email"
-                  id="demo-input-email"
+                  id="input-login-email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@example.com"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  placeholder="name@civicbridge.org"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
                   required
                 />
               </div>
@@ -106,21 +122,21 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 </label>
                 <input
                   type="password"
-                  id="demo-input-password"
+                  id="input-login-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                id="btn-demo-continue"
-                className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 shadow-xs"
+                id="btn-login-continue"
+                className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-xs"
               >
-                <span>Continue</span>
+                <span>Continue to Workspace</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -128,16 +144,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-slate-200" />
                 </div>
-                <span className="relative bg-white px-3 text-xs text-slate-500 uppercase tracking-wider">
-                  OR
+                <span className="relative bg-white px-3 text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
+                  Or Sign In Via
                 </span>
               </div>
 
               <button
                 type="button"
-                id="btn-demo-google"
-                onClick={handleGoogleDemoLogin}
-                className="w-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium py-2.5 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 shadow-xs"
+                id="btn-login-google"
+                onClick={handleGoogleLogin}
+                className="w-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-xs"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path
@@ -157,40 +173,40 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                   />
                 </svg>
-                <span>Continue with Google</span>
+                <span>Continue with Google Single Sign-On</span>
               </button>
 
-              {/* Direct Quick Role Switcher */}
+              {/* Direct Workspace Selectors */}
               <div className="pt-3 border-t border-slate-100">
-                <p className="text-xs text-slate-500 text-center mb-2 font-medium">
-                  Or jump directly into demo role:
+                <p className="text-[11px] text-slate-500 text-center mb-2 font-medium">
+                  Direct Portal Access:
                 </p>
                 <div className="grid grid-cols-2 gap-1.5">
                   <button
                     type="button"
                     onClick={() => handleCompleteLogin('citizen')}
-                    className="text-xs py-1.5 px-2 rounded bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 font-medium transition-colors text-center"
+                    className="text-xs py-2 px-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 font-semibold transition-colors text-center border border-blue-200"
                   >
-                    Citizen
+                    Citizen Portal
                   </button>
                   <button
                     type="button"
                     onClick={() => handleCompleteLogin('field_officer')}
-                    className="text-xs py-1.5 px-2 rounded bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 font-medium transition-colors text-center"
+                    className="text-xs py-2 px-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold transition-colors text-center border border-amber-200"
                   >
                     Field Officer
                   </button>
                   <button
                     type="button"
                     onClick={() => handleCompleteLogin('dept_admin')}
-                    className="text-xs py-1.5 px-2 rounded bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 font-medium transition-colors text-center"
+                    className="text-xs py-2 px-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-semibold transition-colors text-center border border-indigo-200"
                   >
                     Dept Admin
                   </button>
                   <button
                     type="button"
                     onClick={() => handleCompleteLogin('super_admin')}
-                    className="text-xs py-1.5 px-2 rounded bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 font-medium transition-colors text-center"
+                    className="text-xs py-2 px-2 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 font-semibold transition-colors text-center border border-purple-200"
                   >
                     Super Admin
                   </button>
@@ -200,9 +216,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           ) : (
             /* Role Selection Screen Step */
             <div className="space-y-4">
-              <div className="text-center pb-2">
-                <h3 className="text-base font-bold text-slate-900">Continue as:</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Select a role for the pitch demo</p>
+              <div className="text-center pb-1">
+                <h3 className="text-base font-bold text-slate-900">Select Municipal Workspace</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Choose your authorized working role</p>
               </div>
 
               <div className="space-y-2">
@@ -212,9 +228,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                     type="button"
                     id={`login-role-${option.role}`}
                     onClick={() => setSelectedRole(option.role)}
-                    className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 ${
+                    className={`w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 ${
                       selectedRole === option.role
-                        ? 'border-blue-600 bg-blue-50/50 shadow-xs'
+                        ? 'border-blue-600 bg-blue-50/60 shadow-xs'
                         : 'border-slate-200 hover:border-slate-300 bg-white'
                     }`}
                   >
@@ -240,17 +256,17 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 <button
                   type="button"
                   onClick={() => setShowRoleStep(false)}
-                  className="w-1/3 py-2 text-xs text-slate-600 hover:text-slate-800 border border-slate-200 rounded-lg"
+                  className="w-1/3 py-2 text-xs text-slate-600 hover:text-slate-800 border border-slate-200 rounded-xl"
                 >
                   Back
                 </button>
                 <button
                   type="button"
-                  id="btn-confirm-demo-login"
+                  id="btn-confirm-login"
                   onClick={() => handleCompleteLogin()}
-                  className="w-2/3 bg-blue-700 hover:bg-blue-800 text-white font-medium py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                  className="w-2/3 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 rounded-xl text-sm transition-colors flex items-center justify-center gap-1.5 shadow-xs"
                 >
-                  <span>Enter CivicBridge</span>
+                  <span>Launch Workspace</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

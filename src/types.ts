@@ -107,6 +107,14 @@ export interface Innovation {
   createdAt: string;
 }
 
+export interface Department {
+  id: string;
+  name: string;
+  head: string;
+  activeProblems: number;
+  resolved: number;
+}
+
 export interface ConsultationOption {
   key: string;
   label: string;

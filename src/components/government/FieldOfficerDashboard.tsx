@@ -114,7 +114,7 @@ export const FieldOfficerDashboard: React.FC = () => {
               className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="space-y-1.5 flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-xs font-semibold text-slate-500">
                     {prob.id}
                   </span>
@@ -122,18 +122,15 @@ export const FieldOfficerDashboard: React.FC = () => {
                     {prob.category}
                   </span>
 
-                  {/* Urgency tags requested in prompt */}
-                  {isUrgent ? (
+                  {/* Resolution Deadline with Time prominently displayed to field workers */}
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-300">
+                    <Clock className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                    <span>Resolution Deadline: <strong className="text-slate-900">{prob.deadline || 'Standard Municipal SLA'}</strong></span>
+                  </div>
+
+                  {isUrgent && (
                     <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
-                      🔴 Due today
-                    </span>
-                  ) : isTomorrow ? (
-                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                      🟡 Due tomorrow
-                    </span>
-                  ) : (
-                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700">
-                      Deadline: {prob.deadline || 'Standard'}
+                      🔴 Priority
                     </span>
                   )}
                 </div>
@@ -192,6 +189,26 @@ export const FieldOfficerDashboard: React.FC = () => {
                 {activeProblem.title}
               </h2>
               <p className="text-xs text-slate-600 mt-1">{activeProblem.description}</p>
+            </div>
+
+            {/* Assigned Resolution Target & Time Banner */}
+            <div className="p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-amber-200 text-amber-900 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5 text-amber-900" />
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase font-bold tracking-wider text-amber-800">
+                    Assigned Resolution Target & Time
+                  </div>
+                  <div className="text-sm font-bold text-slate-900">
+                    {activeProblem.deadline || 'Standard Municipal SLA (48 Hours)'}
+                  </div>
+                </div>
+              </div>
+              <span className="text-[11px] font-bold text-amber-900 bg-white/80 px-2.5 py-1 rounded-md border border-amber-200 self-start sm:self-auto">
+                Officer Action Target
+              </span>
             </div>
 
             {/* Location & Reported Info */}
@@ -371,7 +388,7 @@ export const FieldOfficerDashboard: React.FC = () => {
                     className="w-20 h-16 object-cover rounded border border-emerald-300"
                   />
                   <div className="flex-1 text-xs">
-                    <span className="text-slate-600 block mb-1">Quick Demo Photos:</span>
+                    <span className="text-slate-600 block mb-1">Select Verification Evidence:</span>
                     <div className="flex gap-1.5">
                       <button
                         type="button"

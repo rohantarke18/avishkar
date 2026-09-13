@@ -8,7 +8,8 @@ import {
   CommunitySolution,
   Innovation,
   Consultation,
-  ProblemLocation
+  ProblemLocation,
+  Department
 } from '../types';
 import {
   DEMO_USERS,
@@ -16,7 +17,8 @@ import {
   INITIAL_CHALLENGES,
   INITIAL_SOLUTIONS,
   INITIAL_INNOVATIONS,
-  INITIAL_CONSULTATIONS
+  INITIAL_CONSULTATIONS,
+  INITIAL_DEPARTMENTS
 } from '../data/mockData';
 
 interface CivicContextType {
@@ -40,6 +42,7 @@ interface CivicContextType {
     urgency?: Problem['urgency'];
   }) => Problem;
   updateProblemStatus: (problemId: string, newStatus: ProblemStatus, note?: string) => void;
+  reopenProblem: (problemId: string, note?: string) => void;
   assignOfficer: (problemId: string, officerName: string, deadline?: string) => void;
   setProblemDeadline: (problemId: string, deadline: string) => void;
   uploadResolution: (problemId: string, photoUrl: string, notes: string) => void;
@@ -49,6 +52,13 @@ interface CivicContextType {
   // Challenges & Solutions
   challenges: OpenChallenge[];
   getChallengeById: (id: string) => OpenChallenge | undefined;
+  addChallenge: (challengeData: {
+    title: string;
+    problemDescription: string;
+    whyDifficult?: string;
+    department: string;
+    location: string;
+  }) => OpenChallenge;
   solutions: CommunitySolution[];
   getSolutionsForChallenge: (challengeId: string) => CommunitySolution[];
   likeSolution: (solutionId: string) => void;
@@ -62,6 +72,15 @@ interface CivicContextType {
   updateSolutionStatus: (solutionId: string, status: CommunitySolution['status'], reviewerNotes?: string) => void;
   reviewSolution: (solutionId: string, action: 'shortlist' | 'expert_review' | 'pilot' | 'reject', reviewerNotes?: string) => void;
 
+  // Departments
+  departments: Department[];
+  addDepartment: (dept: {
+    name: string;
+    head: string;
+    activeProblems?: number;
+    resolved?: number;
+  }) => Department;
+
   // Innovations
   innovations: Innovation[];
   addInnovation: (data: { title: string; problem: string; solution: string; expectedImpact: string }) => Innovation;
@@ -72,10 +91,10 @@ interface CivicContextType {
   voteConsultation: (consultationId: string, optionKey: string) => void;
   getUserVote: (consultationId: string) => string | undefined;
 
-  // Reset demo
+  // Reset data
   resetDemoData: () => void;
 
-  // Global pitch statistics
+  // Municipal statistics
   stats: {
     totalReported: number;
     totalResolved: number;
@@ -144,6 +163,15 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return INITIAL_INNOVATIONS;
   });
 
+  // Departments state
+  const [departments, setDepartments] = useState<Department[]>(() => {
+    const saved = localStorage.getItem('civic_departments');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+    }
+    return INITIAL_DEPARTMENTS;
+  });
+
   // Consultations state
   const [consultations, setConsultations] = useState<Consultation[]>(() => {
     const saved = localStorage.getItem('civic_demo_consultations');
@@ -199,6 +227,10 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     localStorage.setItem('civic_demo_user_votes', JSON.stringify(userConsultationVotes));
   }, [userConsultationVotes]);
 
+  useEffect(() => {
+    localStorage.setItem('civic_departments', JSON.stringify(departments));
+  }, [departments]);
+
   const currentUser = DEMO_USERS[userRole] || DEMO_USERS.citizen;
 
   const switchRole = (newRole: UserRole) => {
@@ -221,6 +253,7 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setSolutions(INITIAL_SOLUTIONS);
     setInnovations(INITIAL_INNOVATIONS);
     setConsultations(INITIAL_CONSULTATIONS);
+    setDepartments(INITIAL_DEPARTMENTS);
     setLikedSolutionIds(['sol-1']);
     setUserConsultationVotes({ 'con-1': 'strongly_support' });
     setUserRole('citizen');
@@ -304,6 +337,26 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         return {
           ...prob,
           status: newStatus,
+          timeline: [...prob.timeline, newTimelineEvent]
+        };
+      })
+    );
+  };
+
+  const reopenProblem = (problemId: string, note?: string) => {
+    setProblems((prev) =>
+      prev.map((prob) => {
+        if (prob.id !== problemId) return prob;
+        const newTimelineEvent = {
+          id: `tl-${Date.now()}`,
+          status: 'reopened' as ProblemStatus,
+          timestamp: 'Just now',
+          note: note || 'Department Admin reopened this problem for re-inspection and work orders.',
+          author: `${currentUser.name} (${currentUser.roleTitle})`
+        };
+        return {
+          ...prob,
+          status: 'reopened',
           timeline: [...prob.timeline, newTimelineEvent]
         };
       })
@@ -429,6 +482,35 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     );
 
     return newChallengeId;
+  };
+
+  const addChallenge = ({
+    title,
+    problemDescription,
+    whyDifficult = '',
+    department,
+    location
+  }: {
+    title: string;
+    problemDescription: string;
+    whyDifficult?: string;
+    department: string;
+    location: string;
+  }): OpenChallenge => {
+    const newChallengeId = `chal-${Date.now()}`;
+    const newChallenge: OpenChallenge = {
+      id: newChallengeId,
+      title,
+      problemDescription,
+      whyDifficult: whyDifficult || 'Standard technical methods reached constraints. Open for community solutions and pilots.',
+      location,
+      department,
+      status: 'open',
+      solutionsCount: 0,
+      createdAt: new Date().toISOString()
+    };
+    setChallenges((prev) => [newChallenge, ...prev]);
+    return newChallenge;
   };
 
   // Challenges & Solutions
@@ -591,6 +673,29 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const getUserVote = (consultationId: string) => userConsultationVotes[consultationId];
 
+  // Departments
+  const addDepartment = ({
+    name,
+    head,
+    activeProblems = 0,
+    resolved = 0
+  }: {
+    name: string;
+    head: string;
+    activeProblems?: number;
+    resolved?: number;
+  }): Department => {
+    const newDept: Department = {
+      id: `dept-${Date.now()}`,
+      name,
+      head,
+      activeProblems,
+      resolved
+    };
+    setDepartments((prev) => [...prev, newDept]);
+    return newDept;
+  };
+
   // Stats calculation
   const totalReported = 1284 + (problems.length - INITIAL_PROBLEMS.length);
   const totalResolved = 1042 + problems.filter((p) => p.status === 'resolved' && !INITIAL_PROBLEMS.some(ip => ip.id === p.id && ip.status === 'resolved')).length;
@@ -612,6 +717,7 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         getProblemById,
         addProblem,
         updateProblemStatus,
+        reopenProblem,
         assignOfficer,
         setProblemDeadline,
         uploadResolution,
@@ -619,6 +725,7 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         publishProblemAsChallenge,
         challenges,
         getChallengeById,
+        addChallenge,
         solutions,
         getSolutionsForChallenge,
         likeSolution,
@@ -626,6 +733,8 @@ export const CivicProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         addSolution,
         updateSolutionStatus,
         reviewSolution,
+        departments,
+        addDepartment,
         innovations,
         addInnovation,
         updateInnovationStatus,

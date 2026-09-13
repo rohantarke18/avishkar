@@ -71,7 +71,7 @@ export const CommunityChallenges: React.FC<CommunityChallengesProps> = ({
     }, 1200);
   };
 
-  // Quick autofill for pitch presentation
+  // Quick autofill template
   const handleQuickFillSolution = () => {
     setSolutionTitle('Smart Sub-Sump Micro Detention Basins');
     setSolutionIdea(

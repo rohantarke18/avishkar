@@ -100,7 +100,7 @@ export const CitizenDashboard: React.FC<CitizenDashboardProps> = ({
           className="px-6 py-4 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 shrink-0 group"
         >
           <PlusCircle className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
-          <span>+ Report a Problem</span>
+          <span>Report a Problem</span>
         </button>
       </div>
 

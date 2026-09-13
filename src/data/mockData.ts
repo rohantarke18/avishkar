@@ -1,10 +1,18 @@
-import { User, Problem, OpenChallenge, CommunitySolution, Innovation, Consultation } from '../types';
+import { User, Problem, OpenChallenge, CommunitySolution, Innovation, Consultation, Department } from '../types';
+
+export const INITIAL_DEPARTMENTS: Department[] = [
+  { id: 'dept-1', name: 'Public Works Department (PWD)', head: 'Vikram Joshi (SE)', activeProblems: 18, resolved: 142 },
+  { id: 'dept-2', name: 'Water Supply & Sewerage Board', head: 'Sneha Kulkarni (EE)', activeProblems: 9, resolved: 88 },
+  { id: 'dept-3', name: 'Solid Waste Management', head: 'Rajesh Deshmukh (Inspector)', activeProblems: 14, resolved: 215 },
+  { id: 'dept-4', name: 'Street Lighting & Power', head: 'Anand Verma (AE)', activeProblems: 6, resolved: 94 },
+  { id: 'dept-5', name: 'Stormwater & Flood Mitigation', head: 'Kavita Rao (Consultant)', activeProblems: 4, resolved: 41 }
+];
 
 export const DEMO_USERS: Record<string, User> = {
   citizen: {
     id: 'usr-citizen-1',
     name: 'Ananya Deshmukh',
-    email: 'ananya.citizen@demo.org',
+    email: 'ananya.citizen@civicbridge.org',
     role: 'citizen',
     roleTitle: 'Active Resident',
     ward: 'Ward 12, West Zone'
@@ -54,10 +62,10 @@ export const INITIAL_PROBLEMS: Problem[] = [
     status: 'in_progress',
     department: 'Public Works Department (PWD)',
     assignedOfficer: 'Rahul Sharma',
-    deadline: '15 Sep 2026',
+    deadline: '15 Sep 2026, 05:00 PM',
     createdAt: '2026-09-10T09:30:00Z',
     reportedBy: 'Ananya Deshmukh',
-    reportedByEmail: 'ananya.citizen@demo.org',
+    reportedByEmail: 'ananya.citizen@civicbridge.org',
     urgency: 'urgent',
     timeline: [
       {
@@ -100,7 +108,7 @@ export const INITIAL_PROBLEMS: Problem[] = [
     status: 'assigned',
     department: 'Electrical Department',
     assignedOfficer: 'Rahul Sharma',
-    deadline: 'Tomorrow, 14 Sep',
+    deadline: 'Tomorrow, 14 Sep, 06:00 PM',
     createdAt: '2026-09-12T14:10:00Z',
     reportedBy: 'Ananya Deshmukh',
     urgency: 'high',
@@ -138,7 +146,7 @@ export const INITIAL_PROBLEMS: Problem[] = [
     status: 'resolution_pending',
     department: 'Drainage & Stormwater',
     assignedOfficer: 'Rahul Sharma',
-    deadline: '13 Sep 2026',
+    deadline: '13 Sep 2026, 04:30 PM',
     createdAt: '2026-09-08T10:00:00Z',
     reportedBy: 'Ananya Deshmukh',
     urgency: 'high',
@@ -193,7 +201,7 @@ export const INITIAL_PROBLEMS: Problem[] = [
     status: 'resolved',
     department: 'Solid Waste Management',
     assignedOfficer: 'Suresh More',
-    deadline: '09 Sep 2026',
+    deadline: '09 Sep 2026, 05:00 PM',
     createdAt: '2026-09-05T08:15:00Z',
     reportedBy: 'Ananya Deshmukh',
     urgency: 'medium',
@@ -256,7 +264,7 @@ export const INITIAL_PROBLEMS: Problem[] = [
     status: 'in_progress',
     department: 'Municipal Corporation & Stormwater',
     assignedOfficer: 'Rahul Sharma',
-    deadline: '20 Sep 2026',
+    deadline: '20 Sep 2026, 06:00 PM',
     createdAt: '2026-09-01T11:00:00Z',
     reportedBy: 'Kavita Verma',
     urgency: 'urgent',

@@ -62,7 +62,7 @@ export const ReportProblemFlow: React.FC<ReportProblemFlowProps> = ({
     'Other'
   ];
 
-  // Demo sample photos for quick 1-click pitch demonstration
+  // Standard sample photos for verified report preview
   const sampleEvidencePhotos = [
     {
       label: 'Pothole',
@@ -108,7 +108,7 @@ export const ReportProblemFlow: React.FC<ReportProblemFlowProps> = ({
     }
   };
 
-  // Preset quick fill for pitch demo
+  // Preset quick fill for sample template
   const handleQuickFillDemo = () => {
     setTitle('Pothole near college gate');
     setDescription(
@@ -198,7 +198,7 @@ export const ReportProblemFlow: React.FC<ReportProblemFlowProps> = ({
 
   return (
     <div id="report-problem-container" className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-      {/* Top Breadcrumb & Pitch Quick-Fill */}
+      {/* Top Breadcrumb & Quick Template */}
       <div className="flex items-center justify-between mb-6">
         <button
           type="button"
@@ -213,10 +213,10 @@ export const ReportProblemFlow: React.FC<ReportProblemFlowProps> = ({
           type="button"
           onClick={handleQuickFillDemo}
           className="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md font-medium border border-blue-200 transition-colors"
-          title="Auto-fill with realistic demo problem for rapid pitching"
+          title="Load sample civic issue template"
         >
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Pitch Auto-Fill</span>
+          <span>Load Example Report</span>
         </button>
       </div>
 
@@ -380,10 +380,10 @@ export const ReportProblemFlow: React.FC<ReportProblemFlowProps> = ({
                 />
               </label>
 
-              {/* Demo Sample Photos Selector for Fast Pitching */}
+              {/* Site Photo Evidence Templates */}
               <div className="pt-2">
                 <span className="text-xs font-semibold text-slate-600 block mb-2">
-                  Or select sample demo photos for fast pitching:
+                  Or select standard site evidence photo:
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {sampleEvidencePhotos.map((sample) => (

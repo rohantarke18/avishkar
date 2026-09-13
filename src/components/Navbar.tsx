@@ -10,7 +10,15 @@ import {
   Menu,
   X,
   UserCheck,
-  ChevronDown
+  ChevronDown,
+  ShieldCheck,
+  HardHat,
+  PhoneCall,
+  Activity,
+  CheckCircle2,
+  LogOut,
+  User,
+  Sparkles
 } from 'lucide-react';
 import { UserRole } from '../types';
 
@@ -36,45 +44,44 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenLogin }) => {
-  const { userRole, currentUser, switchRole, isLoggedIn } = useCivic();
+  const { userRole, currentUser, switchRole, isLoggedIn, logout } = useCivic();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+  const [workspaceDropdownOpen, setWorkspaceDropdownOpen] = useState(false);
 
   const isCitizen = userRole === 'citizen';
 
-  // Citizen Navigation links
+  // Navigation configurations
   const citizenLinks: { id: NavView; label: string; icon: React.ReactNode }[] = [
-    { id: 'citizen_home', label: 'Home', icon: <Building2 className="w-4 h-4" /> },
-    { id: 'report_problem', label: 'Report Problem', icon: <PlusCircle className="w-4 h-4" /> },
-    { id: 'my_problems', label: 'My Problems', icon: <FileText className="w-4 h-4" /> },
-    { id: 'community_solutions', label: 'Community Solutions', icon: <Lightbulb className="w-4 h-4" /> },
-    { id: 'consultations', label: 'Consultations', icon: <Vote className="w-4 h-4" /> },
-    { id: 'public_dashboard', label: 'Transparency', icon: <BarChart3 className="w-4 h-4" /> }
+    { id: 'citizen_home', label: 'Citizen Home', icon: <Building2 className="w-4 h-4 text-blue-600" /> },
+    { id: 'report_problem', label: 'Report Problem', icon: <PlusCircle className="w-4 h-4 text-indigo-600" /> },
+    { id: 'my_problems', label: 'My Submissions', icon: <FileText className="w-4 h-4 text-amber-600" /> },
+    { id: 'community_solutions', label: 'Civic Challenges', icon: <Lightbulb className="w-4 h-4 text-amber-500" /> },
+    { id: 'consultations', label: 'Public Polls', icon: <Vote className="w-4 h-4 text-purple-600" /> },
+    { id: 'public_dashboard', label: 'City Transparency', icon: <BarChart3 className="w-4 h-4 text-emerald-600" /> }
   ];
 
-  // Role-specific Government Navigation links
   const getGovtLinks = (): { id: NavView; label: string; icon: React.ReactNode }[] => {
     if (userRole === 'field_officer') {
       return [
-        { id: 'field_officer', label: 'Assigned Problems', icon: <Building2 className="w-4 h-4" /> },
-        { id: 'community_solutions', label: 'Civic Challenges', icon: <Lightbulb className="w-4 h-4" /> },
-        { id: 'public_dashboard', label: 'Transparency', icon: <BarChart3 className="w-4 h-4" /> }
+        { id: 'field_officer', label: 'Assigned Work Orders', icon: <HardHat className="w-4 h-4 text-amber-600" /> },
+        { id: 'community_solutions', label: 'Open Challenges', icon: <Lightbulb className="w-4 h-4 text-blue-600" /> },
+        { id: 'public_dashboard', label: 'Transparency', icon: <BarChart3 className="w-4 h-4 text-emerald-600" /> }
       ];
     }
     if (userRole === 'dept_admin') {
       return [
-        { id: 'dept_admin', label: 'Department Console', icon: <Building2 className="w-4 h-4" /> },
-        { id: 'community_solutions', label: 'Civic Challenges', icon: <Lightbulb className="w-4 h-4" /> },
-        { id: 'review_solutions', label: 'Review Solutions', icon: <UserCheck className="w-4 h-4" /> },
-        { id: 'public_dashboard', label: 'Transparency', icon: <BarChart3 className="w-4 h-4" /> }
+        { id: 'dept_admin', label: 'Department Console', icon: <Building2 className="w-4 h-4 text-indigo-600" /> },
+        { id: 'review_solutions', label: 'Review Solutions', icon: <UserCheck className="w-4 h-4 text-blue-600" /> },
+        { id: 'community_solutions', label: 'Civic Challenges', icon: <Lightbulb className="w-4 h-4 text-amber-600" /> },
+        { id: 'public_dashboard', label: 'Transparency', icon: <BarChart3 className="w-4 h-4 text-emerald-600" /> }
       ];
     }
     // super_admin
     return [
-      { id: 'super_admin', label: 'Admin Console', icon: <Building2 className="w-4 h-4" /> },
-      { id: 'community_solutions', label: 'Civic Challenges', icon: <Lightbulb className="w-4 h-4" /> },
-      { id: 'review_solutions', label: 'Review Solutions', icon: <UserCheck className="w-4 h-4" /> },
-      { id: 'public_dashboard', label: 'Transparency', icon: <BarChart3 className="w-4 h-4" /> }
+      { id: 'super_admin', label: 'Administration Console', icon: <ShieldCheck className="w-4 h-4 text-purple-600" /> },
+      { id: 'review_solutions', label: 'Review Solutions', icon: <UserCheck className="w-4 h-4 text-blue-600" /> },
+      { id: 'community_solutions', label: 'Civic Challenges', icon: <Lightbulb className="w-4 h-4 text-amber-600" /> },
+      { id: 'public_dashboard', label: 'City Transparency', icon: <BarChart3 className="w-4 h-4 text-emerald-600" /> }
     ];
   };
 
@@ -85,10 +92,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
     setMobileMenuOpen(false);
   };
 
-  const handleRoleSelect = (role: UserRole) => {
+  const handleSwitchWorkspace = (role: UserRole) => {
     switchRole(role);
-    setRoleDropdownOpen(false);
-    // Navigate to appropriate default view
+    setWorkspaceDropdownOpen(false);
     if (role === 'citizen') {
       onNavigate('citizen_home');
     } else if (role === 'field_officer') {
@@ -101,37 +107,102 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
   };
 
   const getHomeViewForRole = (): NavView => {
+    if (currentView === 'landing') return 'landing';
     if (userRole === 'citizen') return 'citizen_home';
     if (userRole === 'field_officer') return 'field_officer';
     if (userRole === 'dept_admin') return 'dept_admin';
     return 'super_admin';
   };
 
+  const getRoleTheme = () => {
+    switch (userRole) {
+      case 'citizen':
+        return {
+          badge: 'bg-blue-50 text-blue-800 border-blue-200',
+          dot: 'bg-blue-600',
+          title: 'Citizen Portal'
+        };
+      case 'field_officer':
+        return {
+          badge: 'bg-amber-50 text-amber-900 border-amber-200',
+          dot: 'bg-amber-500',
+          title: 'Field Operations'
+        };
+      case 'dept_admin':
+        return {
+          badge: 'bg-indigo-50 text-indigo-900 border-indigo-200',
+          dot: 'bg-indigo-600',
+          title: 'Department Admin'
+        };
+      case 'super_admin':
+        return {
+          badge: 'bg-purple-50 text-purple-900 border-purple-200',
+          dot: 'bg-purple-600',
+          title: 'City Administration'
+        };
+    }
+  };
+
+  const currentTheme = getRoleTheme();
+
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-[33px] z-40">
+    <header className="sticky top-0 z-40 bg-white shadow-xs border-b border-slate-200">
+      {/* 1. Official Government Micro-Header Bar */}
+      <div className="bg-slate-900 text-slate-200 text-[11px] font-medium border-b border-slate-800 px-4 sm:px-6 py-1.5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="flex items-center gap-1.5 text-slate-100 font-semibold tracking-wide">
+              <Building2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+              <span>Municipal Corporation of Greater Metropolis</span>
+            </span>
+            <span className="hidden md:inline text-slate-600">•</span>
+            <span className="hidden md:flex items-center gap-1 text-emerald-400 font-normal">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Official Citizen Engagement System</span>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4 text-slate-300">
+            <a
+              href="tel:18002484246"
+              className="flex items-center gap-1.5 hover:text-amber-300 transition-colors"
+              title="24x7 Citizen Grievance Helpline"
+            >
+              <PhoneCall className="w-3 h-3 text-amber-400" />
+              <span className="hidden sm:inline">Citizen Helpline:</span>
+              <span className="font-semibold text-white">1800-CIVIC-GOV</span>
+            </a>
+            <span className="text-slate-700 hidden sm:inline">|</span>
+            <span className="hidden sm:inline-flex items-center gap-1 text-slate-400">
+              <Activity className="w-3 h-3 text-blue-400" />
+              <span>SLA Resolution: 83.1%</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo & Slogan */}
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between h-16 gap-4">
+          {/* Left: Brand Identity */}
+          <div className="flex items-center gap-6">
             <button
               type="button"
               id="nav-logo"
               onClick={() => onNavigate(getHomeViewForRole())}
-              className="flex items-center gap-2.5 text-left group focus:outline-none"
+              className="flex items-center gap-3 text-left group focus:outline-none"
             >
-              <div className="w-9 h-9 rounded-lg bg-blue-900 text-white flex items-center justify-center shadow-xs font-bold text-lg group-hover:bg-blue-800 transition-colors">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 via-indigo-700 to-teal-600 text-white flex items-center justify-center shadow-sm font-black text-lg group-hover:shadow-md transition-all group-hover:scale-[1.02]">
                 CB
               </div>
               <div>
-                <div className="font-bold text-slate-900 text-lg leading-tight tracking-tight flex items-center gap-1.5">
+                <div className="font-extrabold text-slate-900 text-lg leading-tight tracking-tight flex items-center gap-2">
                   <span>CivicBridge</span>
-                  {!isCitizen && (
-                    <span className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono font-medium border border-slate-300">
-                      Govt Portal
-                    </span>
-                  )}
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${currentTheme.badge}`}>
+                    {currentTheme.title}
+                  </span>
                 </div>
-                <div className="text-[11px] text-slate-500 hidden sm:block">
+                <div className="text-[11px] text-slate-500 font-medium">
                   From Protest to Participation
                 </div>
               </div>
@@ -148,10 +219,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                   type="button"
                   id={`nav-link-${link.id}`}
                   onClick={() => handleNavClick(link.id)}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                  className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                     isActive
-                      ? 'bg-blue-50 text-blue-900 font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      ? 'bg-blue-50 text-blue-800 shadow-xs border border-blue-200/80'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                   }`}
                 >
                   {link.icon}
@@ -161,109 +232,173 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
             })}
           </nav>
 
-          {/* Right: Quick Action / Profile Demo Switch */}
-          <div className="flex items-center gap-2">
-            {isCitizen ? (
-              <button
-                type="button"
-                id="nav-btn-quick-report"
-                onClick={() => onNavigate('report_problem')}
-                className="hidden sm:inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-medium px-3.5 py-2 rounded-md shadow-xs transition-colors"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>Report Problem</span>
-              </button>
-            ) : null}
+          {/* Right Action & Workspace Switcher */}
+          <div className="flex items-center gap-3">
+            {/* Primary Action Button: Report a Problem (Always available or prominent) */}
+            <button
+              type="button"
+              id="nav-btn-report-problem"
+              onClick={() => onNavigate('report_problem')}
+              className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-bold text-xs shadow-xs hover:shadow-md transition-all group"
+            >
+              <PlusCircle className="w-4 h-4 text-blue-200 group-hover:text-white transition-colors" />
+              <span>Report Problem</span>
+            </button>
 
-            {/* Role / Profile Dropdown */}
+            {/* Portal / Workspace Switcher Menu */}
             <div className="relative">
               <button
                 type="button"
-                id="btn-nav-role-dropdown"
-                onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs text-slate-800 font-medium transition-colors"
+                id="btn-workspace-switcher"
+                onClick={() => setWorkspaceDropdownOpen(!workspaceDropdownOpen)}
+                className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white hover:border-slate-300 text-xs font-medium text-slate-800 transition-all shadow-xs"
               >
-                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-xs">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-700 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
                   {currentUser.name.charAt(0)}
                 </div>
                 <div className="text-left hidden md:block">
-                  <div className="leading-tight text-xs font-semibold">{currentUser.name}</div>
-                  <div className="text-[10px] text-slate-500 leading-tight">{currentUser.roleTitle}</div>
+                  <div className="leading-tight text-xs font-bold text-slate-900">
+                    {currentUser.name}
+                  </div>
+                  <div className="text-[10px] text-slate-500 leading-tight">
+                    {currentUser.roleTitle}
+                  </div>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
 
-              {roleDropdownOpen && (
+              {/* Workspace Switcher Menu Modal / Dropdown */}
+              {workspaceDropdownOpen && (
                 <div
-                  id="nav-role-dropdown-menu"
-                  className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+                  id="workspace-dropdown-menu"
+                  className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in zoom-in-95 duration-150"
                 >
-                  <div className="px-3 py-1.5 border-b border-slate-100">
-                    <p className="text-xs font-semibold text-slate-900">{currentUser.name}</p>
-                    <p className="text-[11px] text-slate-500">{currentUser.email}</p>
+                  <div className="px-4 py-2.5 border-b border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-900">{currentUser.name}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 font-semibold text-slate-700">
+                        {currentUser.roleTitle}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 mt-0.5">{currentUser.email}</div>
                     {currentUser.department && (
-                      <p className="text-[10px] text-blue-700 font-medium mt-0.5">{currentUser.department}</p>
+                      <div className="text-[11px] text-blue-700 font-medium mt-1 flex items-center gap-1">
+                        <Building2 className="w-3 h-3" />
+                        <span>{currentUser.department}</span>
+                      </div>
                     )}
                   </div>
 
-                  <div className="px-3 py-1.5 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                    Demo Role Switcher
+                  {/* Switch Portal Workspace Header */}
+                  <div className="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    Switch Workspace Portal
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleRoleSelect('citizen')}
-                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${
-                      userRole === 'citizen' ? 'bg-blue-50 text-blue-800 font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span>Citizen (Ananya)</span>
-                    {userRole === 'citizen' && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
-                  </button>
+                  <div className="space-y-1 px-1.5">
+                    {/* Citizen Workspace */}
+                    <button
+                      type="button"
+                      onClick={() => handleSwitchWorkspace('citizen')}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                        userRole === 'citizen'
+                          ? 'bg-blue-50 text-blue-900 font-bold border border-blue-200'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <User className="w-4 h-4 text-blue-600" />
+                        <div>
+                          <div className="font-semibold text-slate-900 text-xs">Citizen Portal</div>
+                          <div className="text-[10px] text-slate-500">Report issues, vote & track updates</div>
+                        </div>
+                      </div>
+                      {userRole === 'citizen' && <CheckCircle2 className="w-4 h-4 text-blue-700" />}
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleRoleSelect('field_officer')}
-                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${
-                      userRole === 'field_officer' ? 'bg-blue-50 text-blue-800 font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span>Field Officer (Rahul)</span>
-                    {userRole === 'field_officer' && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
-                  </button>
+                    {/* Field Officer Workspace */}
+                    <button
+                      type="button"
+                      onClick={() => handleSwitchWorkspace('field_officer')}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                        userRole === 'field_officer'
+                          ? 'bg-amber-50 text-amber-900 font-bold border border-amber-200'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <HardHat className="w-4 h-4 text-amber-600" />
+                        <div>
+                          <div className="font-semibold text-slate-900 text-xs">Field Operations</div>
+                          <div className="text-[10px] text-slate-500">Work orders & resolution proof</div>
+                        </div>
+                      </div>
+                      {userRole === 'field_officer' && <CheckCircle2 className="w-4 h-4 text-amber-700" />}
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleRoleSelect('dept_admin')}
-                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${
-                      userRole === 'dept_admin' ? 'bg-blue-50 text-blue-800 font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span>Dept Admin (Vikram)</span>
-                    {userRole === 'dept_admin' && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
-                  </button>
+                    {/* Department Admin Workspace */}
+                    <button
+                      type="button"
+                      onClick={() => handleSwitchWorkspace('dept_admin')}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                        userRole === 'dept_admin'
+                          ? 'bg-indigo-50 text-indigo-900 font-bold border border-indigo-200'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Building2 className="w-4 h-4 text-indigo-600" />
+                        <div>
+                          <div className="font-semibold text-slate-900 text-xs">Department Console</div>
+                          <div className="text-[10px] text-slate-500">Dispatch officers & open challenges</div>
+                        </div>
+                      </div>
+                      {userRole === 'dept_admin' && <CheckCircle2 className="w-4 h-4 text-indigo-700" />}
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleRoleSelect('super_admin')}
-                    className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between ${
-                      userRole === 'super_admin' ? 'bg-blue-50 text-blue-800 font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span>Super Admin (Sunita)</span>
-                    {userRole === 'super_admin' && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
-                  </button>
+                    {/* Super Admin Workspace */}
+                    <button
+                      type="button"
+                      onClick={() => handleSwitchWorkspace('super_admin')}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                        userRole === 'super_admin'
+                          ? 'bg-purple-50 text-purple-900 font-bold border border-purple-200'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <ShieldCheck className="w-4 h-4 text-purple-600" />
+                        <div>
+                          <div className="font-semibold text-slate-900 text-xs">City Administration</div>
+                          <div className="text-[10px] text-slate-500">City oversight & pilot funding</div>
+                        </div>
+                      </div>
+                      {userRole === 'super_admin' && <CheckCircle2 className="w-4 h-4 text-purple-700" />}
+                    </button>
+                  </div>
 
-                  <div className="border-t border-slate-100 my-1 pt-1">
+                  {/* Public Portal Link */}
+                  <div className="border-t border-slate-100 my-1 pt-1 px-1.5">
                     <button
                       type="button"
                       onClick={() => {
-                        setRoleDropdownOpen(false);
+                        setWorkspaceDropdownOpen(false);
+                        onNavigate('landing');
+                      }}
+                      className="w-full text-left px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg flex items-center justify-between"
+                    >
+                      <span>Public Overview Portal</span>
+                      <span className="text-[10px] text-slate-400">View</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setWorkspaceDropdownOpen(false);
                         onOpenLogin();
                       }}
-                      className="w-full text-left px-3 py-1.5 text-xs text-blue-700 hover:bg-blue-50 font-medium"
+                      className="w-full text-left px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 rounded-lg flex items-center justify-between"
                     >
-                      Show Full Login Screen...
+                      <span>Manage Credentials / Sign In</span>
+                      <UserCheck className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -275,7 +410,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
               type="button"
               id="btn-mobile-menu"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+              className="lg:hidden p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -283,9 +418,21 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
         </div>
       </div>
 
-      {/* Mobile Menu dropdown */}
+      {/* 3. Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div id="mobile-nav-menu" className="lg:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1 shadow-lg">
+        <div id="mobile-nav-menu" className="lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-2 shadow-lg">
+          <button
+            type="button"
+            onClick={() => {
+              onNavigate('report_problem');
+              setMobileMenuOpen(false);
+            }}
+            className="w-full py-2.5 px-3 rounded-lg bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 mb-2"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Report a Problem</span>
+          </button>
+
           {activeLinks.map((link) => {
             const isActive = currentView === link.id;
             return (
@@ -293,9 +440,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
                 key={link.id}
                 type="button"
                 onClick={() => handleNavClick(link.id)}
-                className={`w-full text-left px-3 py-2.5 rounded-md text-sm font-medium flex items-center gap-2.5 ${
+                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-3 ${
                   isActive
-                    ? 'bg-blue-50 text-blue-900 font-semibold'
+                    ? 'bg-blue-50 text-blue-900 border border-blue-200'
                     : 'text-slate-700 hover:bg-slate-50'
                 }`}
               >
@@ -305,16 +452,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
             );
           })}
 
-          <div className="pt-2 border-t border-slate-100">
+          <div className="pt-3 border-t border-slate-100 flex flex-col gap-1.5">
             <button
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
                 onNavigate('landing');
               }}
-              className="w-full text-left px-3 py-2 text-xs text-slate-500 hover:text-slate-900"
+              className="w-full text-left px-3 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900"
             >
-              Pitch Landing Page
+              Municipal Overview Home
             </button>
           </div>
         </div>
