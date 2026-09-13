@@ -1,0 +1,7 @@
+{
+  "name": "CivicBridge",
+  "description": "From Protest to Participation – Connecting citizens and government to report, track, and co-create community solutions.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
