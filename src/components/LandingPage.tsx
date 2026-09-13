@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useCivic } from '../context/CivicContext';
 import { NavView } from './Navbar';
+import StrokeText from './reactbits/StrokeText';
 import {
   ArrowRight,
   AlertTriangle,
@@ -81,15 +82,36 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <span>Municipal Citizen Engagement & Grievance Redressal System</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto">
-          Every Problem Deserves an Answer.{' '}
-          <span className="bg-gradient-to-r from-blue-700 via-indigo-700 to-teal-600 bg-clip-text text-transparent">
-            Every Citizen Deserves a Voice.
-          </span>
-        </h1>
+        {/* 1. Main Heading: CivicBridge (Clean bold display typography matching screenshot) */}
+        <div className="max-w-4xl mx-auto my-1 flex justify-center">
+          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-slate-900 tracking-tight leading-none select-none font-sans">
+            CivicBridge
+          </h1>
+        </div>
 
-        <p className="mt-5 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
-          Report road damage, water issues, and sanitation in 60 seconds. Track verified field action in real time, and co-create community solutions for complex city challenges.
+        {/* 2. Second Heading: From Protest to Participation with StrokeText from React Bits */}
+        <div className="max-w-2xl mx-auto mt-2 mb-4 px-4 flex justify-center">
+          <StrokeText
+            text="From Protest to Participation"
+            strokeColor="#2563EB"
+            fillColor="#1D4ED8"
+            strokeWidth={1.4}
+            drawDuration={1.5}
+            fillDelay={0.2}
+            stagger={0.035}
+            ease="power2.out"
+            trigger="mount"
+            fillMode="wipe"
+            fontSize={44}
+            fontWeight={700}
+            letterSpacing={-0.5}
+            className="w-full text-blue-700 max-w-xl mx-auto"
+          />
+        </div>
+
+        {/* 3. Subtitle / Description */}
+        <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
+          Report civic problems, track government action, propose solutions, and participate in decisions that affect your community.
         </p>
 
         {/* Primary Action Buttons */}

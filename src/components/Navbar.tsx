@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useCivic } from '../context/CivicContext';
+import StrokeText from './reactbits/StrokeText';
 import {
   Building2,
   PlusCircle,
@@ -189,21 +190,39 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenL
             <button
               type="button"
               id="nav-logo"
-              onClick={() => onNavigate(getHomeViewForRole())}
-              className="flex items-center gap-3 text-left group focus:outline-none"
+              onClick={() => onNavigate('landing')}
+              className="flex items-center gap-3 text-left group focus:outline-none cursor-pointer"
+              title="Return to CivicBridge Homepage"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 via-indigo-700 to-teal-600 text-white flex items-center justify-center shadow-sm font-black text-lg group-hover:shadow-md transition-all group-hover:scale-[1.02]">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 via-indigo-700 to-teal-600 text-white flex items-center justify-center shadow-sm font-black text-lg group-hover:shadow-md transition-all group-hover:scale-[1.02] shrink-0">
                 CB
               </div>
-              <div>
-                <div className="font-extrabold text-slate-900 text-lg leading-tight tracking-tight flex items-center gap-2">
-                  <span>CivicBridge</span>
-                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${currentTheme.badge}`}>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="font-black text-slate-900 text-xl leading-none tracking-tight font-sans">
+                    CivicBridge
+                  </span>
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${currentTheme.badge}`}>
                     {currentTheme.title}
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-500 font-medium">
-                  From Protest to Participation
+                <div className="w-48 h-4 mt-0.5 overflow-hidden">
+                  <StrokeText
+                    text="From Protest to Participation"
+                    strokeColor="#2563EB"
+                    fillColor="#2563EB"
+                    strokeWidth={1.2}
+                    drawDuration={1.4}
+                    fillDelay={0.15}
+                    stagger={0.03}
+                    ease="power2.out"
+                    trigger="mount"
+                    fillMode="wipe"
+                    fontSize={15}
+                    fontWeight={600}
+                    letterSpacing={-0.2}
+                    className="w-full text-blue-600"
+                  />
                 </div>
               </div>
             </button>
